@@ -13,9 +13,10 @@ namespace AuthService.Functions
     public static class AuthFunctions
     {
         [FunctionName("perform_login")]
-        public static IActionResult PerformLogin([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]LoginRequest req, TraceWriter log)
+        public static IActionResult PerformLogin([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]LoginRequest req, TraceWriter log)
         {
             log.Info("C# HTTP trigger function processed a request.");
+            log.Info($"{req.EmailAddress}");
 
             return new OkResult();
         }
