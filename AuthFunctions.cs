@@ -7,18 +7,34 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
 using AuthService.Models;
+using AuthService.Services;
+using System.Threading.Tasks;
 
 namespace AuthService.Functions
 {
     public static class AuthFunctions
     {
         [FunctionName("perform_login")]
-        public static IActionResult PerformLogin([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]LoginRequest req, TraceWriter log)
+        public static async Task<IActionResult> PerformLogin([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]LoginRequest req, TraceWriter log)
         {
-            log.Info("C# HTTP trigger function processed a request.");
-            log.Info($"{req.EmailAddress}");
+            if (string.IsNullOrEmpty(req.EmailAddress) || string.IsNullOrEmpty(req.Password))
+            {
+                return new BadRequestResult();
+            }
 
-            return new OkObjectResult(new { message = req.EmailAddress });
+            var result = await UserService.ValidateUser(req.EmailAddress, req.Password);
+            if (!result.IsSuccessful)
+            {
+                return new ForbidResult();
+            }
+
+            // create the jwt token
+            var token = TokenService.CreateWebToken(result.UserId);
+
+            // save the token for validation later
+            await TokenService.SaveToken(token);
+
+            return new OkObjectResult(token);
         }
     }
 }
