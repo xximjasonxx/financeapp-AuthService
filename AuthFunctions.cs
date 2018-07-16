@@ -18,7 +18,7 @@ namespace AuthService.Functions
             log.Info("C# HTTP trigger function processed a request.");
             log.Info($"{req.EmailAddress}");
 
-            return new OkResult();
+            return new OkObjectResult(new { message = req.EmailAddress });
         }
     }
 }
