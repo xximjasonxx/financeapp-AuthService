@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
 
-namespace AuthService
+namespace AuthService.Functions
 {
     public static class AuthFunctions
     {
