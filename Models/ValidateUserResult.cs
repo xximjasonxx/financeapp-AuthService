@@ -1,7 +1,7 @@
 
 namespace AuthService.Models
 {
-    public class LoginResult
+    public class ValidateUserResult
     {
         public string UserId { get; set; }
         

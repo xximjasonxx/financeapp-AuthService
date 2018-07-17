@@ -36,5 +36,15 @@ namespace AuthService.Functions
 
             return new OkObjectResult(token);
         }
+
+        [FunctionName("create_user")]
+        public static async Task<IActionResult> CreateUser([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]User request, TraceWriter log)
+        {
+            var newUser = await UserService.CreateUser(request);
+            var token = TokenService.CreateWebToken(newUser.Id);
+            await TokenService.SaveToken(token);
+
+            return new OkObjectResult(newUser);
+        }
     }
 }
