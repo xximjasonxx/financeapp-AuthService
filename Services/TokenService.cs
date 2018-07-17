@@ -35,8 +35,25 @@ namespace AuthService.Services
             var database = client.GetDatabase("users");
             var collection = database.GetCollection<UserToken>("user_tokens");
 
-            var userToken = new UserToken() { Token = token, ExpiresAt = DateTime.Now.AddDays(30) };
+            var userToken = new UserToken() { Token = token, ExpiresAt = DateTime.UtcNow.AddDays(30) };
             await collection.InsertOneAsync(userToken);
+        }
+
+        public static async Task<bool> TokenIsValid(string token)
+        {
+            var client = new MongoClient("mongodb://financeapp:1e5Q5BuE7wRjGYmPSDj3IHK7gbQifFCvMwx7YoviCrUg88YK1YX3go74vYyeYwlzbrsCOxSfzB8iCVopJ7xHSw==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
+            var database = client.GetDatabase("users");
+            var collection = database.GetCollection<UserToken>("user_tokens");
+
+            var result = await collection.FindAsync(x => x.Token == token);
+            var userToken = result.FirstOrDefault();
+            if (userToken.ExpiresAt >= DateTime.UtcNow)
+            {
+                return true;
+            }
+
+            await collection.DeleteOneAsync(x => x.Token == token);
+            return false;
         }
     }
 }

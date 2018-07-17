@@ -69,5 +69,23 @@ namespace AuthService.Functions
 
             return new OkObjectResult(new UserDataResponse(user));
         }
+
+        [FunctionName("validate_token")]
+        public static async Task<IActionResult> ValidateToken([HttpTrigger(AuthorizationLevel.Anonymous, "get")]HttpRequest request, TraceWriter log)
+        {
+            // get the token
+            string token = request.Headers["Authorization"];
+            if (string.IsNullOrEmpty(token))
+            {
+                return new BadRequestObjectResult(new { message = "No Authorization Token provided" });
+            }
+
+            if (await TokenService.TokenIsValid(token))
+            {
+                return new OkResult();
+            }
+
+            return new UnauthorizedResult();
+        }
     }
 }
