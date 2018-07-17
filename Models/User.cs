@@ -1,4 +1,5 @@
 
+using AuthService.Requests;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
@@ -33,5 +34,18 @@ namespace AuthService.Models
         public string City { get; set; }
         public string State { get; set; }
         public string PostalCode { get; set; }
+
+        public User(CreateUserRequest request)
+        {
+            this.EmailAddress = request.EmailAddress;
+            this.Password = request.Password;
+            this.FirstName = request.FirstName;
+            this.LastName = request.LastName;
+            this.Address1 = request.Address1;
+            this.Address2 = request.Address2;
+            this.City = request.City;
+            this.State = request.State;
+            this.PostalCode = request.PostalCode;
+        }
     }
 }
