@@ -6,6 +6,9 @@ namespace AuthService.Responses
 {
     public class UserDataResponse
     {
+        [JsonProperty("userId")]
+        public string UserId { get; set; }
+
         [JsonProperty("emailAddress")]
         public string EmailAddress { get; set; }
 
@@ -32,6 +35,7 @@ namespace AuthService.Responses
 
         public UserDataResponse(User user)
         {
+            this.UserId = user.Id;
             this.EmailAddress = user.EmailAddress;
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
