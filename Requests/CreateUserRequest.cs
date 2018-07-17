@@ -32,21 +32,5 @@ namespace AuthService.Requests
 
         [JsonProperty("zipcode")]
         public string PostalCode { get; set; }
-
-        public static explicit operator User(CreateUserRequest request)
-        {
-            return new User()
-            {
-                EmailAddress = request.EmailAddress,
-                Password = request.Password,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Address1 = request.Address1,
-                Address2 = request.Address2,
-                City = request.City,
-                State = request.State,
-                PostalCode = request.PostalCode,
-            };
-        }
     }
 }
