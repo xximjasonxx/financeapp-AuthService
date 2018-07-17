@@ -57,5 +57,17 @@ namespace AuthService.Functions
                 Token = token
             });
         }
+
+        [FunctionName("get_user_id")]
+        public static async Task<IActionResult> GetUserById([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")]HttpRequest request, string id, TraceWriter log)
+        {
+            var user = await UserService.GetUserById(id);
+            if (user == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return new OkObjectResult(new UserDataResponse(user));
+        }
     }
 }
