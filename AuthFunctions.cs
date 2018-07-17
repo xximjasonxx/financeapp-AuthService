@@ -17,7 +17,7 @@ namespace AuthService.Functions
     public static class AuthFunctions
     {
         [FunctionName("perform_login")]
-        public static async Task<IActionResult> PerformLogin([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]LoginRequest req, TraceWriter log)
+        public static async Task<IActionResult> PerformLogin([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]LoginRequest req, TraceWriter log)
         {
             if (string.IsNullOrEmpty(req.EmailAddress) || string.IsNullOrEmpty(req.Password))
             {
@@ -42,7 +42,7 @@ namespace AuthService.Functions
         }
 
         [FunctionName("create_user")]
-        public static async Task<IActionResult> CreateUser([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]CreateUserRequest request, TraceWriter log)
+        public static async Task<IActionResult> CreateUser([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]CreateUserRequest request, TraceWriter log)
         {
             // todo: add logic to check for duplicates
             var newUser = new User(request);
@@ -59,7 +59,7 @@ namespace AuthService.Functions
         }
 
         [FunctionName("get_user_id")]
-        public static async Task<IActionResult> GetUserById([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")]HttpRequest request, string id, TraceWriter log)
+        public static async Task<IActionResult> GetUserById([HttpTrigger(AuthorizationLevel.Function, "get", Route = "{id}")]HttpRequest request, string id, TraceWriter log)
         {
             var user = await UserService.GetUserById(id);
             if (user == null)
