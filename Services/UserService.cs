@@ -1,6 +1,7 @@
 
 using System.Threading.Tasks;
 using AuthService.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace AuthService.Services
@@ -33,7 +34,7 @@ namespace AuthService.Services
             var database = client.GetDatabase("users");
             var collection = database.GetCollection<User>("users");
             
-            var result = await collection.FindAsync(x => x.Id == userId);
+            var result = await collection.FindAsync(x => x._Id == ObjectId.Parse(userId));
             return result.FirstOrDefault();
         }
     }
