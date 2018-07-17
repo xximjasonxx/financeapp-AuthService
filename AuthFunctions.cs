@@ -45,6 +45,7 @@ namespace AuthService.Functions
         public static async Task<IActionResult> CreateUser([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]CreateUserRequest request, TraceWriter log)
         {
             // todo: add logic to check for duplicates
+            log.Info($"Email Address: {request.EmailAddress}");
             var newUser = (User)request;
 
             newUser = await UserService.CreateUser(newUser);
