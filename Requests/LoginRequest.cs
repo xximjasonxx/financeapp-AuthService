@@ -1,7 +1,7 @@
 
 using Newtonsoft.Json;
 
-namespace AuthService.Models
+namespace AuthService.Requests
 {
     public class LoginRequest
     {

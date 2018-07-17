@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using AuthService.Models;
 using AuthService.Services;
 using System.Threading.Tasks;
+using AuthService.Requests;
+using AuthService.Responses;
 
 namespace AuthService.Functions
 {
@@ -22,11 +24,13 @@ namespace AuthService.Functions
                 return new BadRequestResult();
             }
 
-            var result = await UserService.ValidateUser(req.EmailAddress, req.Password);
-            if (!result.IsSuccessful)
+            var user = await UserService.FindUserByCredentials(req.EmailAddress, req.Password);
+            if (user == null)
             {
                 return new ForbidResult();
             }
+
+            var result = new UserResponse();
 
             // create the jwt token
             var token = TokenService.CreateWebToken(result.UserId);
@@ -38,13 +42,20 @@ namespace AuthService.Functions
         }
 
         [FunctionName("create_user")]
-        public static async Task<IActionResult> CreateUser([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]User request, TraceWriter log)
+        public static async Task<IActionResult> CreateUser([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)]CreateUserRequest request, TraceWriter log)
         {
-            var newUser = await UserService.CreateUser(request);
+            // todo: add logic to check for duplicates
+            var newUser = (User)request;
+
+            newUser = await UserService.CreateUser(newUser);
             var token = TokenService.CreateWebToken(newUser.Id);
             await TokenService.SaveToken(token);
 
-            return new OkObjectResult(newUser);
+            return new OkObjectResult(new UserResponse
+            {
+                UserId = newUser.Id,
+                Token = token
+            });
         }
     }
 }
