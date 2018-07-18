@@ -79,7 +79,7 @@ namespace AuthService.Functions
         {
             var token = req.Headers["Authorization"].ToString().AsJwtToken();
             log.Info($"token {token}");
-            var isTokenValid = await TokenService.TokenIsValid(token);
+            var isTokenValid = await TokenService.TokenIsValid(token, log);
             log.Info("checking token validity");
             if (!isTokenValid)
             {
