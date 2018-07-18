@@ -1,5 +1,6 @@
 
 using System.IO;
+using AuthService.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -78,10 +79,8 @@ namespace AuthService.Functions
         {
             try
             {
-                var token = req.Headers["Authorization"];
+                var token = req.Headers["Authorization"].ToArray()[0];
                 log.Info($"token {token}");
-
-                
 
                 return new OkResult();
             }
