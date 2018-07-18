@@ -75,7 +75,7 @@ namespace AuthService.Functions
         public static async Task<IActionResult> ValidateToken([HttpTrigger(AuthorizationLevel.Function, "get")]HttpRequest request, TraceWriter log)
         {
             // get the token
-            try
+            /* try
             {
                 string token = request.Headers["Authorization"];
                 log.Info($"token {token}");
@@ -90,7 +90,9 @@ namespace AuthService.Functions
             catch (Exception ex)
             {
                 return new BadRequestObjectResult(new { exception = ex });
-            }
+            } */
+            log.Info("invoked");
+            return new OkResult();
         }
     }
 }
