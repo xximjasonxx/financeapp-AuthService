@@ -78,13 +78,14 @@ namespace AuthService.Functions
             try
             {
                 string token = request.Headers["Authorization"];
+                log.Info($"token {token}");
                 if (await TokenService.TokenIsValid(token))
                 {
                     var userId = TokenService.DecryptToken(token);
                     return new OkObjectResult(new { userId = userId });
                 }
 
-                return new UnauthorizedResult();
+                return new BadRequestObjectResult(new { message = "failed" });
             }
             catch (Exception ex)
             {
