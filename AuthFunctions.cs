@@ -40,7 +40,7 @@ namespace AuthService.Functions
             var token = TokenService.CreateWebToken(result.UserId);
 
             // save the token for validation later
-            await TokenService.SaveToken(token, log);
+            await TokenService.SaveToken(token);
 
             return new OkObjectResult(token);
         }
@@ -53,7 +53,7 @@ namespace AuthService.Functions
 
             newUser = await UserService.CreateUser(newUser);
             var token = TokenService.CreateWebToken(newUser.Id);
-            await TokenService.SaveToken(token, log);
+            await TokenService.SaveToken(token);
 
             return new OkObjectResult(new UserResponse
             {
@@ -77,7 +77,7 @@ namespace AuthService.Functions
         [FunctionName("get_user_for_token")]
         public static async Task<IActionResult> GetUserForToken([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest req, TraceWriter log)
         {
-            var token = req.Headers["Authorization"].ToString().AsJwtToken();
+            var token = req.Headers["auth-key"].ToString().AsJwtToken();
             log.Info($"token {token}");
             var isTokenValid = await TokenService.TokenIsValid(token, log);
             log.Info("checking token validity");
