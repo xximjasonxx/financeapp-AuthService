@@ -75,14 +75,10 @@ namespace AuthService.Functions
         {
             // get the token
             string token = request.Headers["Authorization"];
-            if (string.IsNullOrEmpty(token))
-            {
-                return new BadRequestObjectResult(new { message = "No Authorization Token provided" });
-            }
-
             if (await TokenService.TokenIsValid(token))
             {
-                return new OkResult();
+                var userId = TokenService.DecryptToken(token);
+                return new OkObjectResult(new { userId = userId });
             }
 
             return new UnauthorizedResult();
