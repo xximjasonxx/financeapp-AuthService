@@ -21,6 +21,7 @@ namespace AuthService.Functions
         [FunctionName("perform_login")]
         public static async Task<IActionResult> PerformLogin([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]LoginRequest req, TraceWriter log)
         {
+            log.Info("checking login");
             if (string.IsNullOrEmpty(req.EmailAddress) || string.IsNullOrEmpty(req.Password))
             {
                 return new BadRequestResult();
@@ -75,8 +76,18 @@ namespace AuthService.Functions
         [FunctionName("get_user_for_token")]
         public static IActionResult GetUserForToken([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest req, TraceWriter log)
         {
-            log.Info($"invoked {log.ToString()}");
-            return new OkResult();
+            try
+            {
+                log.Info($"invoked {log.ToString()}");
+                var token = req.Headers["Authorization"];
+                log.Info($"token {token}");
+
+                return new OkResult();
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestResult();
+            }
         }
     }
 }
