@@ -11,6 +11,7 @@ using AuthService.Services;
 using System.Threading.Tasks;
 using AuthService.Requests;
 using AuthService.Responses;
+using System;
 
 namespace AuthService.Functions
 {
@@ -74,14 +75,21 @@ namespace AuthService.Functions
         public static async Task<IActionResult> ValidateToken([HttpTrigger(AuthorizationLevel.Function, "get")]HttpRequest request, TraceWriter log)
         {
             // get the token
-            string token = request.Headers["Authorization"];
-            if (await TokenService.TokenIsValid(token))
+            try
             {
-                var userId = TokenService.DecryptToken(token);
-                return new OkObjectResult(new { userId = userId });
-            }
+                string token = request.Headers["Authorization"];
+                if (await TokenService.TokenIsValid(token))
+                {
+                    var userId = TokenService.DecryptToken(token);
+                    return new OkObjectResult(new { userId = userId });
+                }
 
-            return new UnauthorizedResult();
+                return new UnauthorizedResult();
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(new { exception = ex });
+            }
         }
     }
 }
