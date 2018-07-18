@@ -65,22 +65,14 @@ namespace AuthService.Services
             await collection.InsertOneAsync(userToken);
         }
 
-        public static async Task<bool> TokenIsValid(string token, TraceWriter writer)
+        public static async Task<bool> TokenIsValid(string token)
         {
             var client = new MongoClient("mongodb://financeapp:1e5Q5BuE7wRjGYmPSDj3IHK7gbQifFCvMwx7YoviCrUg88YK1YX3go74vYyeYwlzbrsCOxSfzB8iCVopJ7xHSw==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
-            writer.Info("mark 1");
-            
             var database = client.GetDatabase("users");
-            writer.Info("mark 2");
-
             var collection = database.GetCollection<UserToken>("user_tokens");
-            writer.Info("mark 3");
-            writer.Info($"token {token}");
-
             var result = await collection.FindAsync(x => x.Token == token);
-            writer.Info("mark 4");
             var userToken = result.FirstOrDefault();
-            if (userToken.ExpiresAt >= DateTime.UtcNow)
+            if (userToken != null && userToken.ExpiresAt >= DateTime.UtcNow)
             {
                 return true;
             }
