@@ -75,7 +75,7 @@ namespace AuthService.Functions
         [FunctionName("validate_token")]
         public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequest req, ILogger log)
         {
-            log.Info("C# HTTP trigger function processed a request.");
+            log.LogInformation("C# HTTP trigger function processed a request.");
 
             string name = req.Query["name"];
 
