@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using AuthService.Requests;
 using AuthService.Responses;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace AuthService.Functions
 {
@@ -72,7 +73,7 @@ namespace AuthService.Functions
         }
 
         [FunctionName("validate_token")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequest req, ILogger log)
         {
             log.Info("C# HTTP trigger function processed a request.");
 
