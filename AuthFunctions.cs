@@ -70,29 +70,5 @@ namespace AuthService.Functions
 
             return new OkObjectResult(new UserDataResponse(user));
         }
-
-        [FunctionName("validate_token")]
-        public static async Task<IActionResult> ValidateToken([HttpTrigger(AuthorizationLevel.Function, "get")]HttpRequest request, TraceWriter log)
-        {
-            // get the token
-            /* try
-            {
-                string token = request.Headers["Authorization"];
-                log.Info($"token {token}");
-                if (await TokenService.TokenIsValid(token))
-                {
-                    var userId = TokenService.DecryptToken(token);
-                    return new OkObjectResult(new { userId = userId });
-                }
-
-                return new BadRequestObjectResult(new { message = "failed" });
-            }
-            catch (Exception ex)
-            {
-                return new BadRequestObjectResult(new { exception = ex });
-            } */
-            log.Info("invoked");
-            return new OkResult();
-        }
     }
 }
