@@ -6,6 +6,7 @@ using AuthService.Models;
 using JWT;
 using JWT.Algorithms;
 using JWT.Serializers;
+using Microsoft.Azure.WebJobs.Host;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
 
@@ -64,11 +65,13 @@ namespace AuthService.Services
             await collection.InsertOneAsync(userToken);
         }
 
-        public static async Task<bool> TokenIsValid(string token)
+        public static async Task<bool> TokenIsValid(string token, TraceWriter writer)
         {
             var client = new MongoClient("mongodb://financeapp:1e5Q5BuE7wRjGYmPSDj3IHK7gbQifFCvMwx7YoviCrUg88YK1YX3go74vYyeYwlzbrsCOxSfzB8iCVopJ7xHSw==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
             var database = client.GetDatabase("users");
             var collection = database.GetCollection<UserToken>("user_tokens");
+            if (collection == null)
+                writer.Info("collection is null");
 
             var result = await collection.FindAsync(x => x.Token == token);
             var userToken = result.FirstOrDefault();
