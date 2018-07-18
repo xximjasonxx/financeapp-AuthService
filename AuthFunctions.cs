@@ -72,9 +72,10 @@ namespace AuthService.Functions
             return new OkObjectResult(new UserDataResponse(user));
         }
 
-        [FunctionName("validate_token")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequest req)
+        [FunctionName("get_user_for_token")]
+        public static IActionResult GetUserForToken([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest req, TraceWriter log)
         {
+            log.Info($"invoked {log.ToString()}");
             return new OkResult();
         }
     }
