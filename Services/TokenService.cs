@@ -76,8 +76,7 @@ namespace AuthService.Services
             {
                 return true;
             }
-
-            writer.Info("mark 5");
+            
             await collection.DeleteOneAsync(x => x.Token == token);
             return false;
         }
