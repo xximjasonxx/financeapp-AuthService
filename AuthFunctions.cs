@@ -77,17 +77,17 @@ namespace AuthService.Functions
         [FunctionName("get_user_for_token")]
         public static async Task<IActionResult> GetUserForToken([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest req, TraceWriter log)
         {
-            try
-            {
-                var token = req.Headers["Authorization"].ToString().AsJwtToken();
-                log.Info($"token {token}");
+            var token = req.Headers["Authorization"].ToString().AsJwtToken();
+            log.Info($"token {token}");
 
-                return new OkResult();
-            }
-            catch (Exception ex)
+            var isTokenValid = await TokenService.TokenIsValid(token);
+            if (!isTokenValid)
             {
-                return new BadRequestResult();
+                return new UnauthorizedResult();
             }
+
+            var userId = TokenService.DecryptToken(token);
+            return new OkObjectResult(new { userId = userId });
         }
     }
 }
