@@ -40,7 +40,7 @@ namespace AuthService.Functions
             var token = TokenService.CreateWebToken(result.UserId);
 
             // save the token for validation later
-            await TokenService.SaveToken(token);
+            await TokenService.SaveToken(token, log);
 
             return new OkObjectResult(token);
         }
@@ -53,7 +53,7 @@ namespace AuthService.Functions
 
             newUser = await UserService.CreateUser(newUser);
             var token = TokenService.CreateWebToken(newUser.Id);
-            await TokenService.SaveToken(token);
+            await TokenService.SaveToken(token, log);
 
             return new OkObjectResult(new UserResponse
             {
