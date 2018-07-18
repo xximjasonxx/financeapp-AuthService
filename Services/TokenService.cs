@@ -55,12 +55,13 @@ namespace AuthService.Services
             }
         }
 
-        public static async Task SaveToken(string token)
+        public static async Task SaveToken(string token, TraceWriter writer)
         {
             var client = new MongoClient("mongodb://financeapp:1e5Q5BuE7wRjGYmPSDj3IHK7gbQifFCvMwx7YoviCrUg88YK1YX3go74vYyeYwlzbrsCOxSfzB8iCVopJ7xHSw==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
             var database = client.GetDatabase("users");
             var collection = database.GetCollection<UserToken>("user_tokens");
 
+            writer.Info($"token {token}");
             var userToken = new UserToken() { Token = token, ExpiresAt = DateTime.UtcNow.AddDays(30) };
             await collection.InsertOneAsync(userToken);
         }
