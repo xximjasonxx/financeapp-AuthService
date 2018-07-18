@@ -85,7 +85,7 @@ namespace AuthService.Services
             }
             
             log.Info("deleting");
-            await collection.DeleteOneAsync(x => x.Token == token);
+            // await collection.DeleteOneAsync(x => x.Token == token);
             return false;
         }
     }
