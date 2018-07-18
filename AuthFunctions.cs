@@ -74,13 +74,14 @@ namespace AuthService.Functions
         }
 
         [FunctionName("get_user_for_token")]
-        public static IActionResult GetUserForToken([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest req, TraceWriter log)
+        public static async Task<IActionResult> GetUserForToken([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest req, TraceWriter log)
         {
             try
             {
-                log.Info($"invoked {log.ToString()}");
                 var token = req.Headers["Authorization"];
                 log.Info($"token {token}");
+
+                
 
                 return new OkResult();
             }
