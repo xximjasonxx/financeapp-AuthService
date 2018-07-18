@@ -79,7 +79,7 @@ namespace AuthService.Functions
         {
             try
             {
-                var token = req.Headers["Authorization"].ToArray()[0];
+                var token = req.Headers["Authorization"].ToString().AsJwtToken();
                 log.Info($"token {token}");
 
                 return new OkResult();
