@@ -71,7 +71,7 @@ namespace AuthService.Functions
         }
 
         [FunctionName("validate_token")]
-        public static async Task<IActionResult> ValidateToken([HttpTrigger(AuthorizationLevel.Anonymous, "get")]HttpRequest request, TraceWriter log)
+        public static async Task<IActionResult> ValidateToken([HttpTrigger(AuthorizationLevel.Function, "get")]HttpRequest request, TraceWriter log)
         {
             // get the token
             string token = request.Headers["Authorization"];
