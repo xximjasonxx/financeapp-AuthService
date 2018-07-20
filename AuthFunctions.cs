@@ -42,7 +42,7 @@ namespace AuthService.Functions
             // save the token for validation later
             await TokenService.SaveToken(token);
 
-            return new OkObjectResult(token);
+            return new OkObjectResult(new { token = token });
         }
 
         [FunctionName("create_user")]
