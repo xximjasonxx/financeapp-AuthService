@@ -7,7 +7,6 @@ using JWT;
 using JWT.Algorithms;
 using JWT.Serializers;
 using Microsoft.Azure.WebJobs.Host;
-using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
 
 namespace AuthService.Services
@@ -57,17 +56,17 @@ namespace AuthService.Services
 
         public static async Task SaveToken(string token)
         {
-            var client = new MongoClient("mongodb://financeapp:alxvP9nMsU21vn6Ap0iLWnPRiKvqauHMDm0SK9jI8OwfNqIfluujL532VHqjZPg61668dt5VWAFbO2DoYpETIg==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
+            /*var client = new MongoClient("mongodb://financeapp:alxvP9nMsU21vn6Ap0iLWnPRiKvqauHMDm0SK9jI8OwfNqIfluujL532VHqjZPg61668dt5VWAFbO2DoYpETIg==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
             var database = client.GetDatabase("users");
             var collection = database.GetCollection<UserToken>("user_tokens");
 
             var userToken = new UserToken() { Token = token, ExpiresAt = DateTime.UtcNow.AddDays(30) };
-            await collection.InsertOneAsync(userToken);
+            await collection.InsertOneAsync(userToken); */
         }
 
         public static async Task<bool> TokenIsValid(string token)
         {
-            var client = new MongoClient("mongodb://financeapp:alxvP9nMsU21vn6Ap0iLWnPRiKvqauHMDm0SK9jI8OwfNqIfluujL532VHqjZPg61668dt5VWAFbO2DoYpETIg==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
+            /*var client = new MongoClient("mongodb://financeapp:alxvP9nMsU21vn6Ap0iLWnPRiKvqauHMDm0SK9jI8OwfNqIfluujL532VHqjZPg61668dt5VWAFbO2DoYpETIg==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
             var database = client.GetDatabase("users");
             var collection = database.GetCollection<UserToken>("user_tokens");
             var result = await collection.FindAsync(x => x.Token == token);
@@ -78,7 +77,7 @@ namespace AuthService.Services
                 return true;
             }
             
-            await collection.DeleteOneAsync(x => x.Token == token);
+            await collection.DeleteOneAsync(x => x.Token == token);*/
             return false;
         }
     }
