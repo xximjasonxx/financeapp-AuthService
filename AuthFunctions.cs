@@ -31,7 +31,7 @@ namespace AuthService.Functions
             var user = await UserService.FindUserByCredentials(req.EmailAddress, req.Password);
             if (user == null)
             {
-                return new ForbidResult();
+                return new NotFoundResult();
             }
 
             var result = new UserResponse();
@@ -48,16 +48,13 @@ namespace AuthService.Functions
         [FunctionName("create_user")]
         public static async Task<IActionResult> CreateUser([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]CreateUserRequest request, TraceWriter log)
         {
-            // todo: add logic to check for duplicates
-            var newUser = new User(request);
-
-            newUser = await UserService.CreateUser(newUser);
-            var token = TokenService.CreateWebToken(newUser.Id);
+            var newUser = await UserService.CreateUser(request);
+            var token = TokenService.CreateWebToken(newUser.Id.ToString());
             await TokenService.SaveToken(token);
 
             return new OkObjectResult(new UserResponse
             {
-                UserId = newUser.Id,
+                UserId = newUser.Id.ToString(),
                 Token = token
             });
         }
@@ -71,7 +68,7 @@ namespace AuthService.Functions
                 return new NotFoundResult();
             }
 
-            return new OkObjectResult(new UserDataResponse(user));
+            return new OkObjectResult(user);
         }
 
         [FunctionName("get_user_for_token")]
