@@ -22,17 +22,12 @@ namespace AuthService.Functions
         [FunctionName("perform_login")]
         public static async Task<IActionResult> PerformLogin([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]LoginRequest req, TraceWriter log)
         {
-            log.Info("checking login");
             if (string.IsNullOrEmpty(req.EmailAddress) || string.IsNullOrEmpty(req.Password))
-            {
                 return new BadRequestResult();
-            }
 
             var user = await UserService.FindUserByCredentials(req.EmailAddress, req.Password);
             if (user == null)
-            {
                 return new NotFoundResult();
-            }
 
             var result = new UserResponse();
 
@@ -75,15 +70,18 @@ namespace AuthService.Functions
         public static async Task<IActionResult> GetUserForToken([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest req, TraceWriter log)
         {
             var token = req.Headers["auth-key"].ToString().AsJwtToken();
-            log.Info($"received token {token}");
-            var isTokenValid = await TokenService.TokenIsValid(token);
-            if (!isTokenValid)
-            {
-                return new UnauthorizedResult();
-            }
+            if (string.IsNullOrEmpty(token))
+                return new BadRequestResult();
+
+            var user = await CacheService.GetValueForKey<User>(token);
+            if (user == null)
+                return new NotFoundResult();
 
             var userId = TokenService.DecryptToken(token);
-            return new OkObjectResult(new { userId = userId });
+            if (userId != user.Id.ToString())
+                return new UnauthorizedResult();
+
+            return new OkObjectResult(user);
         }
     }
 }

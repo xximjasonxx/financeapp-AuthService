@@ -8,6 +8,7 @@ using JWT.Algorithms;
 using JWT.Serializers;
 using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json.Linq;
+using StackExchange.Redis;
 
 namespace AuthService.Services
 {
@@ -56,6 +57,8 @@ namespace AuthService.Services
 
         public static async Task SaveToken(string token)
         {
+            
+
             /*var client = new MongoClient("mongodb://financeapp:alxvP9nMsU21vn6Ap0iLWnPRiKvqauHMDm0SK9jI8OwfNqIfluujL532VHqjZPg61668dt5VWAFbO2DoYpETIg==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
             var database = client.GetDatabase("users");
             var collection = database.GetCollection<UserToken>("user_tokens");
@@ -66,19 +69,13 @@ namespace AuthService.Services
 
         public static async Task<bool> TokenIsValid(string token)
         {
-            /*var client = new MongoClient("mongodb://financeapp:alxvP9nMsU21vn6Ap0iLWnPRiKvqauHMDm0SK9jI8OwfNqIfluujL532VHqjZPg61668dt5VWAFbO2DoYpETIg==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
-            var database = client.GetDatabase("users");
-            var collection = database.GetCollection<UserToken>("user_tokens");
-            var result = await collection.FindAsync(x => x.Token == token);
-            var userToken = result.FirstOrDefault();
-
-            if (userToken != null && userToken.ExpiresAt >= DateTime.UtcNow)
+            var result = await CacheService.GetValueForKey<User>(token);
+            if (result == null)
             {
-                return true;
+                return false;
             }
-            
-            await collection.DeleteOneAsync(x => x.Token == token);*/
-            return false;
+
+            return true;
         }
     }
 }
