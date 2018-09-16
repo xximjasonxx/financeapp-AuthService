@@ -44,6 +44,10 @@ namespace AuthService.Services
 
         public static async Task<User> GetUserById(string userId)
         {
+            Guid userIdGuid;
+            if (!Guid.TryParse(userId, out userIdGuid))
+                return null;
+
             using (var connection = GetConnection())
             {
                 const string sql = "select * from Users where Id = @UserId";

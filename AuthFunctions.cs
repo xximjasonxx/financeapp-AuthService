@@ -14,11 +14,22 @@ using AuthService.Requests;
 using AuthService.Responses;
 using System;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
 
 namespace AuthService.Functions
 {
     public static class AuthFunctions
     {
+        static IMapper GetMapping()
+        {
+            var mappperConfig = new MapperConfiguration(cfg => {
+                cfg.CreateMap<User, UserResponse>()
+                    .ForMember(x => x.Id, opt => opt.MapFrom(x1 => x1.Id.ToString()));
+            });
+
+            return mappperConfig.CreateMapper();
+        }
+
         [FunctionName("perform_login")]
         public static async Task<IActionResult> PerformLogin([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]LoginRequest req, TraceWriter log)
         {
@@ -29,15 +40,14 @@ namespace AuthService.Functions
             if (user == null)
                 return new NotFoundResult();
 
-            var result = new UserResponse();
-
             // create the jwt token
-            var token = TokenService.CreateWebToken(result.UserId);
+            var token = TokenService.CreateWebToken(user.Id.ToString());
+            await CacheService.WriteKeyAsync(token, user);
 
-            // save the token for validation later
-            await TokenService.SaveToken(token);
+            var response = GetMapping().Map<UserResponse>(user);
+            response.Token = token;
 
-            return new OkObjectResult(new { token = token });
+            return new OkObjectResult(response);
         }
 
         [FunctionName("create_user")]
@@ -45,17 +55,16 @@ namespace AuthService.Functions
         {
             var newUser = await UserService.CreateUser(request);
             var token = TokenService.CreateWebToken(newUser.Id.ToString());
-            await TokenService.SaveToken(token);
+            await CacheService.WriteKeyAsync(token, newUser);
 
-            return new OkObjectResult(new UserResponse
-            {
-                UserId = newUser.Id.ToString(),
-                Token = token
-            });
+            var response = GetMapping().Map<UserResponse>(newUser);
+            response.Token = token;
+
+            return new OkObjectResult(response);
         }
 
         [FunctionName("get_user_id")]
-        public static async Task<IActionResult> GetUserById([HttpTrigger(AuthorizationLevel.Function, "get", Route = "{id}")]HttpRequest request, string id, TraceWriter log)
+        public static async Task<IActionResult> GetUserById([HttpTrigger(AuthorizationLevel.Function, "get", Route = "user/{id}")]HttpRequest request, string id, TraceWriter log)
         {
             var user = await UserService.GetUserById(id);
             if (user == null)
@@ -66,7 +75,7 @@ namespace AuthService.Functions
             return new OkObjectResult(user);
         }
 
-        [FunctionName("get_user_for_token")]
+        [FunctionName("validate_token")]
         public static async Task<IActionResult> GetUserForToken([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequest req, TraceWriter log)
         {
             var token = req.Headers["auth-key"].ToString().AsJwtToken();
@@ -81,7 +90,9 @@ namespace AuthService.Functions
             if (userId != user.Id.ToString())
                 return new UnauthorizedResult();
 
-            return new OkObjectResult(user);
+            var response = GetMapping().Map<UserResponse>(user);
+            response.Token = token;
+            return new OkObjectResult(response);
         }
     }
 }

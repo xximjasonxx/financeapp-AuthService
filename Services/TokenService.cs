@@ -54,28 +54,5 @@ namespace AuthService.Services
                 return string.Empty;
             }
         }
-
-        public static async Task SaveToken(string token)
-        {
-            
-
-            /*var client = new MongoClient("mongodb://financeapp:alxvP9nMsU21vn6Ap0iLWnPRiKvqauHMDm0SK9jI8OwfNqIfluujL532VHqjZPg61668dt5VWAFbO2DoYpETIg==@financeapp.documents.azure.com:10255/?ssl=true&replicaSet=globaldb");
-            var database = client.GetDatabase("users");
-            var collection = database.GetCollection<UserToken>("user_tokens");
-
-            var userToken = new UserToken() { Token = token, ExpiresAt = DateTime.UtcNow.AddDays(30) };
-            await collection.InsertOneAsync(userToken); */
-        }
-
-        public static async Task<bool> TokenIsValid(string token)
-        {
-            var result = await CacheService.GetValueForKey<User>(token);
-            if (result == null)
-            {
-                return false;
-            }
-
-            return true;
-        }
     }
 }

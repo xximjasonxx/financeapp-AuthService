@@ -8,6 +8,7 @@
     <PackageReference Include="JWT" Version="4.0.0"/>
     <PackageReference Include="Dapper" Version="1.50.5"/>
     <PackageReference Include="StackExchange.Redis" Version="2.0.505"/>
+    <PackageReference Include="AutoMapper" Version="7.0.0"/>
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
