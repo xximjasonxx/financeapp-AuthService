@@ -1,4 +1,5 @@
 
+using System;
 using AuthService.Models;
 using Newtonsoft.Json;
 
@@ -6,6 +7,9 @@ namespace AuthService.Requests
 {
     public class CreateUserRequest
     {
+        [JsonIgnore]
+        public Guid Id {get; set; }
+        
         [JsonProperty("emailAddress")]
         public string EmailAddress { get; set; }
 
